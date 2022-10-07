@@ -50,11 +50,11 @@ handle(Req, DocRoot) ->
             R:respond({501, [], []}, Req)
     end
     catch
-    Type:What ->
+    Type:What:Trace ->
         Report = ["web request failed",
                 {path, R:get(path,Req)},
                 {type, Type}, {what, What},
-                {trace, erlang:get_stacktrace()}],
+                {trace, Trace}],
         error_logger:error_report(Report),
         R:respond({500, [{"Content-Type", "text/plain"}],
                     "request failed, sorry\n"},Req)
@@ -177,4 +177,3 @@ new_response({Request, Code, Headers}) ->
     mochiweb_response:new(Request,
                           Code,
                           mochiweb_headers:make(Headers)).
-
